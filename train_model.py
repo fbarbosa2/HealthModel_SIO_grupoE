@@ -18,7 +18,7 @@ import joblib
 
 #print("Path to dataset files:", path)
 
-dataset = pd.read_csv('Disease_symptom_and_patient_profile_dataset.csv')
+dataset = pd.read_csv('datasets/Disease_symptom_and_patient_profile_dataset.csv')
 
 #Disease,Fever,Cough,Fatigue,Difficulty Breathing,Age,Gender,Blood Pressure,Cholesterol Level,Outcome Variable
 
