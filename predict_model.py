@@ -17,7 +17,11 @@ def predict(fever, cough, fatigue, breathing, age, gender, bp, cholesterol):
     input_data = [[fever, cough, fatigue, breathing, age, gender, bp, cholesterol, 0]]
 
     prediction = disease_tree.predict(input_data)[0]
+    probs = disease_tree.predict_proba(input_data)[0]
+    confidence = probs[prediction]
+
     predicted_disease = labelEncoder.inverse_transform([prediction])[0]
 
-    return predicted_disease
+
+    return predicted_disease + " Percentagem de Certeza: " + str(confidence) + "%"
 
