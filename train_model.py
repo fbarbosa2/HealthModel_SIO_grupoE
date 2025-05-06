@@ -17,34 +17,53 @@ import joblib
 #path = kagglehub.dataset_download("uom190346a/disease-symptoms-and-patient-profile-dataset")
 
 #print("Path to dataset files:", path)
+#Change this to use the simpler or the more complex dataset
+datasetComplex = True
 
-dataset = pd.read_csv('datasets/Disease_symptom_and_patient_profile_dataset.csv')
-
-#Disease,Fever,Cough,Fatigue,Difficulty Breathing,Age,Gender,Blood Pressure,Cholesterol Level,Outcome Variable
-
-"""Conversão dos dados em numéricos para o scikit-learn"""
 labelEncoder = LabelEncoder()
-dataset['Disease'] = labelEncoder.fit_transform(dataset['Disease'])
-#print(labelEncoder.classes_)
+X = None
+Y = None
 
-dataset['Fever'] = np.where(dataset['Fever'] == 'Yes', 1, 0) #Yes 1 / No 0
-dataset['Cough'] = np.where(dataset['Cough'] == 'Yes', 1, 0) #Yes 1 / No 0
-dataset['Fatigue'] = np.where(dataset['Fatigue'] == 'Yes', 1, 0) #Yes 1 / No 0
-dataset['Difficulty Breathing'] = np.where(dataset['Difficulty Breathing'] == 'Yes', 1, 0) #Yes 1 / No 0
-dataset['Gender'] = np.where(dataset['Gender'] == 'Female', 1, 0) #Female 1 / Male 0
-dataset['Blood Pressure'] = np.where(dataset['Blood Pressure'] == 'Normal', 1, 0) #Normal 1 / Low 0
+if(datasetComplex):
+    dataset = pd.read_csv('datasets/Disease_and_symptoms_dataset_COMPLEX.csv')
 
-cholesterol_map = {'Low': 0, 'Normal': 1, 'High': 2}
-dataset['Cholesterol Level'] = dataset['Cholesterol Level'].map(cholesterol_map)
+    dataset['diseases'] = labelEncoder.fit_transform(dataset['diseases'])
+    #print(labelEncoder.classes_)
+    X = dataset.iloc[:, 1:].values
+    Y = dataset['diseases']
 
-dataset['Outcome Variable'] = np.where(dataset['Outcome Variable'] == 'Positive', 1, 0) #Positive 1 / Negative 0
+    disease_tree = tree.DecisionTreeClassifier()
+    disease_tree.fit(X, Y)
 
-X = dataset.iloc[:, 1:].values
-Y = dataset['Disease']
+else:
+    dataset = pd.read_csv('datasets/Disease_symptom_and_patient_profile_dataset.csv')
 
-disease_tree = tree.DecisionTreeClassifier()
-disease_tree.fit(X, Y)
+    #Disease,Fever,Cough,Fatigue,Difficulty Breathing,Age,Gender,Blood Pressure,Cholesterol Level,Outcome Variable
 
+    """Conversão dos dados em numéricos para o scikit-learn"""
+
+    dataset['Disease'] = labelEncoder.fit_transform(dataset['Disease'])
+    #print(labelEncoder.classes_)
+
+    dataset['Fever'] = np.where(dataset['Fever'] == 'Yes', 1, 0) #Yes 1 / No 0
+    dataset['Cough'] = np.where(dataset['Cough'] == 'Yes', 1, 0) #Yes 1 / No 0
+    dataset['Fatigue'] = np.where(dataset['Fatigue'] == 'Yes', 1, 0) #Yes 1 / No 0
+    dataset['Difficulty Breathing'] = np.where(dataset['Difficulty Breathing'] == 'Yes', 1, 0) #Yes 1 / No 0
+    dataset['Gender'] = np.where(dataset['Gender'] == 'Female', 1, 0) #Female 1 / Male 0
+    dataset['Blood Pressure'] = np.where(dataset['Blood Pressure'] == 'Normal', 1, 0) #Normal 1 / Low 0
+
+    cholesterol_map = {'Low': 0, 'Normal': 1, 'High': 2}
+    dataset['Cholesterol Level'] = dataset['Cholesterol Level'].map(cholesterol_map)
+
+    dataset['Outcome Variable'] = np.where(dataset['Outcome Variable'] == 'Positive', 1, 0) #Positive 1 / Negative 0
+
+    X = dataset.iloc[:, 1:].values
+    Y = dataset['Disease']
+
+    disease_tree = tree.DecisionTreeClassifier()
+    disease_tree.fit(X, Y)
+
+#Saves the tree and the encoder for future use
 joblib.dump(disease_tree, 'disease_tree_model.pkl')
 joblib.dump(labelEncoder, 'label_encoder.pkl')
 

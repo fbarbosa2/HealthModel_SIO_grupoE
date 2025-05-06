@@ -180,3 +180,4 @@ cython_debug/
 .vscode/
 
 datasets/Disease_and_symptoms_dataset_COMPLEX.csv
+disease_tree
