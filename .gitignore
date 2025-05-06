@@ -174,4 +174,7 @@ cython_debug/
 .pypirc
 
 #Pychar config file
-.idea
+.idea/
+
+#VSCode config file
+.vscode/
