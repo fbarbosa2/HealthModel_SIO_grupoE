@@ -25,7 +25,7 @@ X = None
 Y = None
 
 if(datasetComplex):
-    dataset = pd.read_csv('datasets/Disease_and_symptoms_dataset_COMPLEX.csv')
+    dataset = pd.read_csv('datasets/Disease and symptoms dataset.csv')
 
     dataset['diseases'] = labelEncoder.fit_transform(dataset['diseases'])
     #print(labelEncoder.classes_)
