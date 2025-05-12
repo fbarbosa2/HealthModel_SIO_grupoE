@@ -7,11 +7,10 @@ app = Flask(__name__)
 CORS(app)
 
 # Carregar modelo, label encoder e dataset
-disease_tree = joblib.load('disease_tree_model.pkl')
+rf_model = joblib.load('disease_rf_model.pkl')
 labelEncoder = joblib.load('label_encoder.pkl')
 df = pd.read_csv("datasets/Disease and symptoms dataset.csv")
 
-# Rota complexa
 @app.route('/predict-complex', methods=['POST'])
 def predict_complex():
     try:
@@ -21,8 +20,8 @@ def predict_complex():
         sintomas = df.columns[1:]
         input_data = [[1 if sintoma in sintomas_paciente else 0 for sintoma in sintomas]]
 
-        prediction = disease_tree.predict(input_data)[0]
-        probs = disease_tree.predict_proba(input_data)[0]
+        prediction = rf_model.predict(input_data)[0]
+        probs = rf_model.predict_proba(input_data)[0]
         confidence = probs[prediction]
 
         predicted_disease = labelEncoder.inverse_transform([prediction])[0]

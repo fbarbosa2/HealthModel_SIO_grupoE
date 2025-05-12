@@ -1,89 +1,66 @@
-#import kagglehub
-import graphviz
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.neural_network import MLPClassifier
-from sklearn import tree
-from sklearn import metrics
-from sklearn.preprocessing import LabelEncoder
-import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.tree import export_graphviz
 import joblib
 
-# Download latest version
-#path = kagglehub.dataset_download("uom190346a/disease-symptoms-and-patient-profile-dataset")
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn.ensemble import RandomForestClassifier
+from sklearn import metrics
 
-#print("Path to dataset files:", path)
-#Change this to use the simpler or the more complex dataset
+# Definir se usar dataset complexo
 datasetComplex = True
 
 labelEncoder = LabelEncoder()
-X = None
-Y = None
 
-if(datasetComplex):
+# === Leitura e pré-processamento ===
+if datasetComplex:
     dataset = pd.read_csv('datasets/Disease and symptoms dataset.csv')
-
     dataset['diseases'] = labelEncoder.fit_transform(dataset['diseases'])
-    #print(labelEncoder.classes_)
     X = dataset.iloc[:, 1:].values
     Y = dataset['diseases']
-
-    disease_tree = tree.DecisionTreeClassifier()
-    disease_tree.fit(X, Y)
+    feature_names = dataset.columns[1:]
 
 else:
     dataset = pd.read_csv('datasets/Disease_symptom_and_patient_profile_dataset.csv')
 
-    #Disease,Fever,Cough,Fatigue,Difficulty Breathing,Age,Gender,Blood Pressure,Cholesterol Level,Outcome Variable
-
-    """Conversão dos dados em numéricos para o scikit-learn"""
-
     dataset['Disease'] = labelEncoder.fit_transform(dataset['Disease'])
-    #print(labelEncoder.classes_)
-
-    dataset['Fever'] = np.where(dataset['Fever'] == 'Yes', 1, 0) #Yes 1 / No 0
-    dataset['Cough'] = np.where(dataset['Cough'] == 'Yes', 1, 0) #Yes 1 / No 0
-    dataset['Fatigue'] = np.where(dataset['Fatigue'] == 'Yes', 1, 0) #Yes 1 / No 0
-    dataset['Difficulty Breathing'] = np.where(dataset['Difficulty Breathing'] == 'Yes', 1, 0) #Yes 1 / No 0
-    dataset['Gender'] = np.where(dataset['Gender'] == 'Female', 1, 0) #Female 1 / Male 0
-    dataset['Blood Pressure'] = np.where(dataset['Blood Pressure'] == 'Normal', 1, 0) #Normal 1 / Low 0
-
+    dataset['Fever'] = np.where(dataset['Fever'] == 'Yes', 1, 0)
+    dataset['Cough'] = np.where(dataset['Cough'] == 'Yes', 1, 0)
+    dataset['Fatigue'] = np.where(dataset['Fatigue'] == 'Yes', 1, 0)
+    dataset['Difficulty Breathing'] = np.where(dataset['Difficulty Breathing'] == 'Yes', 1, 0)
+    dataset['Gender'] = np.where(dataset['Gender'] == 'Female', 1, 0)
+    dataset['Blood Pressure'] = np.where(dataset['Blood Pressure'] == 'Normal', 1, 0)
     cholesterol_map = {'Low': 0, 'Normal': 1, 'High': 2}
     dataset['Cholesterol Level'] = dataset['Cholesterol Level'].map(cholesterol_map)
-
-    dataset['Outcome Variable'] = np.where(dataset['Outcome Variable'] == 'Positive', 1, 0) #Positive 1 / Negative 0
+    dataset['Outcome Variable'] = np.where(dataset['Outcome Variable'] == 'Positive', 1, 0)
 
     X = dataset.iloc[:, 1:].values
     Y = dataset['Disease']
+    feature_names = dataset.columns[1:]
 
-    disease_tree = tree.DecisionTreeClassifier()
-    disease_tree.fit(X, Y)
+# === Divisão treino/teste ===
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
 
-#Saves the tree and the encoder for future use
-joblib.dump(disease_tree, 'disease_tree_model.pkl')
+# === Modelo: Random Forest ===
+rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_model.fit(X_train, Y_train)
+Y_pred = rf_model.predict(X_test)
+
+# === Avaliação ===
+print("=== Random Forest ===")
+print("Accuracy:", metrics.accuracy_score(Y_test, Y_pred))
+print(metrics.classification_report(Y_test, Y_pred))
+
+# === Visualização da importância dos atributos ===
+importances = rf_model.feature_importances_
+plt.figure(figsize=(12, 6))
+sns.barplot(x=importances, y=feature_names)
+plt.title("Importância dos Atributos (Random Forest)")
+plt.tight_layout()
+plt.show()
+
+# === Guardar modelo e encoder ===
+joblib.dump(rf_model, 'disease_rf_model.pkl')
 joblib.dump(labelEncoder, 'label_encoder.pkl')
-
-"""
-print(tree.export_text(disease_tree))
-
-# Exportar a árvore para o formato DOT
-dot_data = export_graphviz(
-    disease_tree,
-    out_file=None,
-    feature_names=dataset.columns[1:],  # Exclui 'Disease'
-    class_names=[str(cls) for cls in labelEncoder.classes_],  # nomes das doenças
-    filled=True,
-    rounded=True,
-    special_characters=True
-)
-
-# Mostrar com graphviz
-graph = graphviz.Source(dot_data)
-graph.render("disease_tree", format="png", cleanup=True)  # Cria o ficheiro disease_tree.png
-graph.view()
-"""
-
