@@ -99,11 +99,11 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
 .background {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #6ca7ce 100%, #c6e6fc 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1e3c72 0%, #3360ad 50%, #6ca7ce 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .form-container {

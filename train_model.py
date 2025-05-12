@@ -1,70 +1,42 @@
-#import kagglehub
-import graphviz
-import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.neural_network import MLPClassifier
-from sklearn import tree
-from sklearn import metrics
 from sklearn.preprocessing import LabelEncoder
-import matplotlib.pyplot as plt
+from sklearn.metrics import accuracy_score
+import pandas as pd
 import numpy as np
-from sklearn.cluster import KMeans
-import seaborn as sns
-from sklearn.tree import export_graphviz
 import joblib
 
-# Download latest version
-#path = kagglehub.dataset_download("uom190346a/disease-symptoms-and-patient-profile-dataset")
+# Carregar dataset
+df = pd.read_csv('Disease_symptom_and_patient_profile_dataset.csv')
 
-#print("Path to dataset files:", path)
-
-dataset = pd.read_csv('Disease_symptom_and_patient_profile_dataset.csv')
-
-#Disease,Fever,Cough,Fatigue,Difficulty Breathing,Age,Gender,Blood Pressure,Cholesterol Level,Outcome Variable
-
-"""Conversão dos dados em numéricos para o scikit-learn"""
+# Codificar variáveis categóricas
 labelEncoder = LabelEncoder()
-dataset['Disease'] = labelEncoder.fit_transform(dataset['Disease'])
-#print(labelEncoder.classes_)
+df['Disease'] = labelEncoder.fit_transform(df['Disease'])
+df['Fever'] = (df['Fever'] == 'Yes').astype(int)
+df['Cough'] = (df['Cough'] == 'Yes').astype(int)
+df['Fatigue'] = (df['Fatigue'] == 'Yes').astype(int)
+df['Difficulty Breathing'] = (df['Difficulty Breathing'] == 'Yes').astype(int)
+df['Gender'] = (df['Gender'] == 'Female').astype(int)
+df['Blood Pressure'] = (df['Blood Pressure'] == 'Normal').astype(int)
+df['Cholesterol Level'] = df['Cholesterol Level'].map({'Low': 0, 'Normal': 1, 'High': 2})
+df['Outcome Variable'] = (df['Outcome Variable'] == 'Positive').astype(int)
 
-dataset['Fever'] = np.where(dataset['Fever'] == 'Yes', 1, 0) #Yes 1 / No 0
-dataset['Cough'] = np.where(dataset['Cough'] == 'Yes', 1, 0) #Yes 1 / No 0
-dataset['Fatigue'] = np.where(dataset['Fatigue'] == 'Yes', 1, 0) #Yes 1 / No 0
-dataset['Difficulty Breathing'] = np.where(dataset['Difficulty Breathing'] == 'Yes', 1, 0) #Yes 1 / No 0
-dataset['Gender'] = np.where(dataset['Gender'] == 'Female', 1, 0) #Female 1 / Male 0
-dataset['Blood Pressure'] = np.where(dataset['Blood Pressure'] == 'Normal', 1, 0) #Normal 1 / Low 0
+# Features e target
+features = df.columns[df.columns != 'Disease']
+X = df[features]
+y = df['Disease']
 
-cholesterol_map = {'Low': 0, 'Normal': 1, 'High': 2}
-dataset['Cholesterol Level'] = dataset['Cholesterol Level'].map(cholesterol_map)
+# Treino/teste split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-dataset['Outcome Variable'] = np.where(dataset['Outcome Variable'] == 'Positive', 1, 0) #Positive 1 / Negative 0
+# Modelo
+rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_model.fit(X_train, y_train)
 
-X = dataset.iloc[:, 1:].values
-Y = dataset['Disease']
+# Avaliação
+y_pred = rf_model.predict(X_test)
+print(f"Acuracy: {accuracy_score(y_test, y_pred):.2f}")
 
-disease_tree = tree.DecisionTreeClassifier()
-disease_tree.fit(X, Y)
-
-joblib.dump(disease_tree, 'disease_tree_model.pkl')
+# Salvar modelo e encoder
+joblib.dump(rf_model, 'disease_rf_model.pkl')
 joblib.dump(labelEncoder, 'label_encoder.pkl')
-
-"""
-print(tree.export_text(disease_tree))
-
-# Exportar a árvore para o formato DOT
-dot_data = export_graphviz(
-    disease_tree,
-    out_file=None,
-    feature_names=dataset.columns[1:],  # Exclui 'Disease'
-    class_names=[str(cls) for cls in labelEncoder.classes_],  # nomes das doenças
-    filled=True,
-    rounded=True,
-    special_characters=True
-)
-
-# Mostrar com graphviz
-graph = graphviz.Source(dot_data)
-graph.render("disease_tree", format="png", cleanup=True)  # Cria o ficheiro disease_tree.png
-graph.view()
-"""
-

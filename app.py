@@ -5,7 +5,7 @@ import joblib
 app = Flask(__name__)
 CORS(app)
 
-disease_tree = joblib.load('disease_tree_model.pkl')
+rf_model = joblib.load('disease_rf_model.pkl')
 labelEncoder = joblib.load('label_encoder.pkl')
 
 @app.route('/predict', methods=['POST'])
@@ -25,8 +25,8 @@ def predict():
 
         input_data = [[fever, cough, fatigue, breathing, age, gender, bp, cholesterol, 0]]
 
-        prediction = disease_tree.predict(input_data)[0]
-        confidence = disease_tree.predict_proba(input_data)[0][prediction]
+        prediction = rf_model.predict(input_data)[0]
+        confidence = rf_model.predict_proba(input_data)[0][prediction]
         predicted_disease = labelEncoder.inverse_transform([prediction])[0]
 
         result = f"{predicted_disease} - Certeza: {round(confidence * 100, 2)}%"
@@ -35,7 +35,6 @@ def predict():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 400
-
 
 if __name__ == '__main__':
     app.run(debug=True)
