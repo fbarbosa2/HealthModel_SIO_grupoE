@@ -44,7 +44,7 @@ else:
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
 
 # === Modelo: Random Forest ===
-rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_model = RandomForestClassifier(n_estimators=10, random_state=42)
 rf_model.fit(X_train, Y_train)
 Y_pred = rf_model.predict(X_test)
 
