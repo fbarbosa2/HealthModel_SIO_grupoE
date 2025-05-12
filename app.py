@@ -22,7 +22,8 @@ def predict_complex():
 
         prediction = rf_model.predict(input_data)[0]
         probs = rf_model.predict_proba(input_data)[0]
-        confidence = probs[prediction]
+        class_index = list(rf_model.classes_).index(prediction)
+        confidence = probs[class_index]
 
         predicted_disease = labelEncoder.inverse_transform([prediction])[0]
         result = f"{predicted_disease} - Certeza: {round(confidence * 100, 2)}%"

@@ -51,7 +51,6 @@ Y_pred = rf_model.predict(X_test)
 # === Avaliação ===
 print("=== Random Forest ===")
 print("Accuracy:", metrics.accuracy_score(Y_test, Y_pred))
-print(metrics.classification_report(Y_test, Y_pred))
 
 # === Visualização da importância dos atributos ===
 importances = rf_model.feature_importances_
