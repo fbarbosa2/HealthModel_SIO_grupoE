@@ -36,7 +36,16 @@ def predict():
         confidence = rf_model.predict_proba(input_data)[0][prediction]
         predicted_disease = labelEncoder.inverse_transform([prediction])[0]
 
-        result = f"{predicted_disease} - Certeza: {round(confidence * 100, 2)}%"
+        confidence_percent = round(confidence * 100, 2)
+
+        if confidence_percent <= 40:
+            level = "Pouco confiável"
+        elif confidence_percent < 70:
+            level = "Confiável"
+        else:
+            level = "Muito confiável"
+
+        result = f"{predicted_disease} - Certeza: ({level})"
 
         return jsonify({'result': result})
 
