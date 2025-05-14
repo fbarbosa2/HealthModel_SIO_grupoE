@@ -51,6 +51,47 @@
                     <option value="High">Alto</option>
                 </select>
 
+                <label for="sore-throat">Garganta Seca</label>
+                <select v-model="form.sore_throat" id="sore-throat">
+                    <option value="Yes">Sim</option>
+                    <option value="No">Não</option>
+                </select>
+
+                <label for="chest-pain">Dor no peito</label>
+                <select v-model="form.chest_pain" id="chest-pain">
+                    <option value="Yes">Sim</option>
+                    <option value="No">Não</option>
+                </select>
+
+                <label for="skin-rash">Erupção cutânea</label>
+                <select v-model="form.skin_rash" id="skin-rash">
+                    <option value="Yes">Sim</option>
+                    <option value="No">Não</option>
+                </select>
+
+                <label for="nausea">Náuseas</label>
+                <select v-model="form.nausea" id="nausea">
+                    <option value="Yes">Sim</option>
+                    <option value="No">Não</option>
+                </select>
+
+                <label for="muscle-pain">Dores Musculares</label>
+                <select v-model="form.muscle_pain" id="muscle-pain">
+                    <option value="Yes">Sim</option>
+                    <option value="No">Não</option>
+                </select>
+
+                <label for="loss-of-appetite">Perda de Apetite</label>
+                <select v-model="form.loss_of_appetite" id="loss-of-appetite">
+                    <option value="Yes">Sim</option>
+                    <option value="No">Não</option>
+                </select>
+
+                <label for="dizziness">Tonturas</label>
+                <select v-model="form.dizziness" id="dizziness">
+                    <option value="Yes">Sim</option>
+                    <option value="No">Não</option>
+                </select>
                 <button type="submit">Submeter</button>
 
                 <p v-if="result" class="result">{{ result }}</p>
@@ -71,7 +112,14 @@ export default {
                 age: 0,
                 gender: 'Male',
                 bp: 'Normal',
-                cholesterol: 'Normal'
+                cholesterol: 'Normal',
+                sore_throat: 'No',
+                chest_pain: 'No',
+                skin_rash: 'No',
+                nausea: 'No',
+                muscle_pain: 'No',
+                loss_of_appetite: 'No',
+                dizziness: 'No'
             },
             result: ''
         };

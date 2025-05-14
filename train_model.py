@@ -7,7 +7,7 @@ import numpy as np
 import joblib
 
 # Carregar dataset
-df = pd.read_csv('Disease_symptom_and_patient_profile_dataset.csv')
+df = pd.read_csv('balanced_disease_dataset.csv')
 
 # Codificar variáveis categóricas
 labelEncoder = LabelEncoder()
@@ -30,7 +30,7 @@ y = df['Disease']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # Modelo
-rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_model = RandomForestClassifier(n_estimators=30, random_state=42)
 rf_model.fit(X_train, y_train)
 
 # Avaliação

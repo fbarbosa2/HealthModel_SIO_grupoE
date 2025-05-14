@@ -22,8 +22,15 @@ def predict():
         bp = 1 if data['bp'] == 'Normal' else 0
         cholesterol_map = {'Low': 0, 'Normal': 1, 'High': 2}
         cholesterol = cholesterol_map.get(data['cholesterol'], 1)
+        sore_throat = 1 if data['sore_throat'] == 'Yes' else 0
+        chest_pain = 1 if data['chest_pain'] == 'Yes' else 0
+        skin_rash = 1 if data['skin_rash'] == 'Yes' else 0
+        nausea = 1 if data['nausea'] == 'Yes' else 0
+        muscle_pain = 1 if data['muscle_pain'] == 'Yes' else 0
+        loss_of_appetite = 1 if data['loss_of_appetite'] == 'Yes' else 0
+        dizziness = 1 if data['dizziness'] == 'Yes' else 0
 
-        input_data = [[fever, cough, fatigue, breathing, age, gender, bp, cholesterol, 0]]
+        input_data = [[fever, cough, fatigue, breathing, age, gender, bp, cholesterol, sore_throat, chest_pain, skin_rash, nausea, muscle_pain, loss_of_appetite, dizziness,0]]
 
         prediction = rf_model.predict(input_data)[0]
         confidence = rf_model.predict_proba(input_data)[0][prediction]
