@@ -45,7 +45,7 @@ def predict():
         else:
             level = "Muito confiável"
 
-        result = f"{predicted_disease} - Certeza: ({level})"
+        result = f"{predicted_disease} - ({level})"
 
         return jsonify({'result': result})
 
