@@ -5,7 +5,7 @@ import numpy as np
 disease_tree = joblib.load('disease_tree_model.pkl')
 labelEncoder = joblib.load('label_encoder.pkl')
 
-def predict(fever, cough, fatigue, breathing, age, gender, bp, cholesterol):
+def predict(fever, cough, fatigue, breathing, age, gender, bp, cholesterol, sore_throat, chest_pain, skin_rash, nausea, muscle_pain, loss_of_appetite, dizziness):
     fever = 1 if fever == 'Yes' else 0
     cough = 1 if cough == 'Yes' else 0
     fatigue = 1 if fatigue == 'Yes' else 0
@@ -15,7 +15,7 @@ def predict(fever, cough, fatigue, breathing, age, gender, bp, cholesterol):
     cholesterol_map = {'Low': 0, 'Normal': 1, 'High': 2}
     cholesterol = cholesterol_map.get(cholesterol, 1)  # valor por defeito: Normal
 
-    input_data = [[fever, cough, fatigue, breathing, age, gender, bp, cholesterol, 0]]
+    input_data = [[fever, cough, fatigue, breathing, age, gender, bp, cholesterol, sore_throat, chest_pain, skin_rash, nausea, muscle_pain,loss_of_appetite,dizziness, 0]]
 
     prediction = disease_tree.predict(input_data)[0]
     probs = disease_tree.predict_proba(input_data)[0]

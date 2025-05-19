@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import joblib
+import numpy as np
 
 app = Flask(__name__)
 CORS(app)
@@ -36,16 +37,19 @@ def predict():
         confidence = rf_model.predict_proba(input_data)[0][prediction]
         predicted_disease = labelEncoder.inverse_transform([prediction])[0]
 
-        confidence_percent = round(confidence * 100, 2)
+        probs = rf_model.predict_proba(input_data)[0]  # vetor de probabilidades para cada classe
+        top3_indices = np.argsort(probs)[-3:][::-1]        # índices das 3 classes com maior probabilidade
 
-        if confidence_percent <= 40:
-            level = "Pouco confiável"
-        elif confidence_percent < 70:
-            level = "Confiável"
-        else:
-            level = "Muito confiável"
+        top_predicted_diseases = labelEncoder.inverse_transform(top3_indices)  # nomes das doenças
+        top_confidences = probs[top3_indices]                                   # probabilidades associadas
 
-        result = f"{predicted_disease} - Certeza: ({level})"
+        frase = ""
+        i = 1
+        for disease, confidence in zip(top_predicted_diseases, top_confidences):
+            frase += f"{i}º {disease}\n"
+            i += 1
+        
+        result = f"Possiveis Doenças:\n{frase}"
 
         return jsonify({'result': result})
 
