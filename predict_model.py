@@ -1,4 +1,5 @@
 import joblib
+import numpy as np
 
 #Para carregar o modelo e o encoder guardados
 disease_tree = joblib.load('disease_tree_model.pkl')
@@ -23,5 +24,15 @@ def predict(fever, cough, fatigue, breathing, age, gender, bp, cholesterol):
     predicted_disease = labelEncoder.inverse_transform([prediction])[0]
 
 
-    return predicted_disease + " Percentagem de Certeza: " + str(confidence) + "%"
+    probs = disease_tree.predict_proba(input_data)[0]  # vetor de probabilidades para cada classe
+    top3_indices = np.argsort(probs)[-3:][::-1]        # índices das 3 classes com maior probabilidade
+
+    top_predicted_diseases = labelEncoder.inverse_transform(top3_indices)  # nomes das doenças
+    top_confidences = probs[top3_indices]                                   # probabilidades associadas
+
+    frase = None
+    for disease, confidence in zip(top_predicted_diseases, top_confidences):
+        frase += "Doença: {disease}, Confiança: {confidence:.2f}\n"
+
+    return predicted_disease + " Percentagem de Certeza: " + str(confidence) + "%\n" + frase
 
