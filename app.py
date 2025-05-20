@@ -31,25 +31,23 @@ def predict():
         loss_of_appetite = 1 if data['loss_of_appetite'] == 'Yes' else 0
         dizziness = 1 if data['dizziness'] == 'Yes' else 0
 
-        input_data = [[fever, cough, fatigue, breathing, age, gender, bp, cholesterol, sore_throat, chest_pain, skin_rash, nausea, muscle_pain, loss_of_appetite, dizziness,0]]
+        input_data = [[fever, cough, fatigue, breathing, age, gender, bp, cholesterol, sore_throat, chest_pain, skin_rash, nausea, muscle_pain, loss_of_appetite, dizziness, 0]]
 
-        prediction = rf_model.predict(input_data)[0]
-        confidence = rf_model.predict_proba(input_data)[0][prediction]
-        predicted_disease = labelEncoder.inverse_transform([prediction])[0]
+        probs = rf_model.predict_proba(input_data)[0]
+        top3_indices = np.argsort(probs)[-3:][::-1]
+        top_predicted_diseases = labelEncoder.inverse_transform(top3_indices)
+        top_confidences = probs[top3_indices]
+        total_top_confidence = sum(top_confidences)
 
-        probs = rf_model.predict_proba(input_data)[0]  # vetor de probabilidades para cada classe
-        top3_indices = np.argsort(probs)[-3:][::-1]        # índices das 3 classes com maior probabilidade
-
-        top_predicted_diseases = labelEncoder.inverse_transform(top3_indices)  # nomes das doenças
-        top_confidences = probs[top3_indices]                                   # probabilidades associadas
+        normalized_confidences = [(conf / total_top_confidence) * 100 for conf in top_confidences]
 
         frase = ""
-        i = 1
-        for disease, confidence in zip(top_predicted_diseases, top_confidences):
-            frase += f"{i}º {disease}\n"
-            i += 1
-        
-        result = f"Possiveis Doenças:\n{frase}"
+        for i, (disease, percent) in enumerate(zip(top_predicted_diseases, normalized_confidences), start=1):
+            frase += f"{i}º {disease} - {round(percent, 2)}%\n"
+
+        frase = frase.strip()
+
+        result = f"Possíveis Doenças:\n{frase}"
 
         return jsonify({'result': result})
 

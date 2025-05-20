@@ -95,10 +95,10 @@
                 <button type="submit">Submeter</button>
 
                 <div v-if="result" class="result-box">
-                <div class="result-text">
-                    <strong>Diagnóstico previsto:</strong><br />
-                    <span>{{ result }}</span>
-                </div>
+                    <div class="result-text">
+                        <strong>Diagnóstico previsto:</strong><br/>
+                        <pre>{{ result }}</pre>
+                    </div>
                 </div>
 
             </form>
@@ -153,11 +153,11 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
 .background {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #1e3c72 0%, #3360ad 50%, #6ca7ce 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1e3c72 0%, #3360ad 50%, #6ca7ce 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .form-container {
@@ -243,30 +243,31 @@ select option {
 }
 
 .result-box {
-  margin-top: 2rem;
-  padding: 1.5rem;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(6px);
-  color: #fff;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.6s ease-in-out;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(6px);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.6s ease-in-out;
 }
 
 .result-text {
-  font-size: 1.2rem;
-  line-height: 1.5;
+    font-size: 1.2rem;
+    line-height: 1.5;
+    font-family: 'Inter', sans-serif;
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(15px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
 
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 </style>
