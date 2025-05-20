@@ -171,6 +171,8 @@ export default {
     color: #fff;
     font-family: 'Inter', sans-serif;
     box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+    margin-top: 30px;
+    margin-bottom: 30px;
 }
 
 h1 {
